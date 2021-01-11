@@ -1,0 +1,14 @@
+{% extends "base.html.jw" %}
+{% block title %}
+Edit User {{user.first_name}} {{user.last_name}}
+{% endblock title %}
+
+{% block body %}
+    <form action="/user/{{user.id}}/edit" method="POST">
+        <input type="text" name="first_name" value="{{user.first_name}}">
+        <input type="text" name="last_name" value="{{user.last_name}}">
+        <input type="text" name="image_url" value="{{user.image_url}}">
+        <input type="submit" value="Confirm Edits">
+        <a href="/user/{{user.id}}" class="btn btn-danger">Cancel</a>
+    </form>
+{% endblock body %}

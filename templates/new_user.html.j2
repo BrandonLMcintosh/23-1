@@ -3,6 +3,12 @@
 {% block title %}
 Create a User
 {% endblock title %}
-{% block body %}
 
+{% block body %}
+    <form action="/users/new" method="POST">
+        <input type="text" name="first_name" placeholder="first name">
+        <input type="text" name="last_name" placeholder="last name">
+        <input type="text" name="image_url" placeholder="Profile picture URL">
+        <input type="submit" value="Submit New User">
+    </form>
 {% endblock body %} 
