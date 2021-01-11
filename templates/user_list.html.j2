@@ -6,7 +6,7 @@ Users
 {% block body %}
     <ul>
         {% for user in users %}
-            <li><a href="/users/{{user.id}}">{{user.first_name}} {{user.last_name}}</a></li>
+            <li><a href="/users/{{user.id}}">{{user.full_name}}</a></li>
         {% endfor %}
     </ul>
     <a href="/users/new" class="btn btn-primary">Create a User</a>

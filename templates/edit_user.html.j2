@@ -1,14 +1,16 @@
-{% extends "base.html.jw" %}
+{% extends "base.html.j2" %}
 {% block title %}
-Edit User {{user.first_name}} {{user.last_name}}
+Edit User {{user.full_name}}
 {% endblock title %}
 
 {% block body %}
-    <form action="/user/{{user.id}}/edit" method="POST">
+
+    <form action="/users/{{user.id}}/edit" method="POST">
         <input type="text" name="first_name" value="{{user.first_name}}">
         <input type="text" name="last_name" value="{{user.last_name}}">
         <input type="text" name="image_url" value="{{user.image_url}}">
-        <input type="submit" value="Confirm Edits">
-        <a href="/user/{{user.id}}" class="btn btn-danger">Cancel</a>
+        <input type="submit" value="Confirm Edits" class="btn btn-success">
+        <a href="/users/{{user.id}}" class="btn btn-danger">Cancel</a>
     </form>
+
 {% endblock body %}

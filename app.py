@@ -24,7 +24,7 @@ def index():
 def users_get():
     """GET ROUTE FOR USER LIST (INDEX)"""
 
-    users = User.query.all()
+    users = User.query.order_by(User.first_name).all()
     return render_template("user_list.html.j2", users=users)
 
 
@@ -41,7 +41,7 @@ def users_post():
 
     first_name = request.form["first_name"]
     last_name = request.form["last_name"]
-    image_url = request.form["image_url"]
+    image_url = request.form["image_url"] or None
 
     user = User(
         first_name=first_name,
@@ -59,6 +59,7 @@ def users_get_user(user_id):
     """GET ROUTE FOR INDIVIDUAL USER"""
 
     user = User.query.get_or_404(user_id)
+    print(type(user.image_url))
     return render_template("user.html.j2", user=user)
 
 
@@ -81,6 +82,8 @@ def users_edit_post(user_id):
     user.image_url = request.form["image_url"]
     db.session.commit()
 
+    return redirect(f'/users/{user_id}')
+
 
 
 @app.route('/users/<int:user_id>/delete')
@@ -90,4 +93,4 @@ def users_delete_user(user_id):
     user = User.query.get_or_404(user_id)
     db.session.delete(user)
     db.session.commit()
-    return redirect('/')
+    return redirect('/users')

@@ -1,14 +1,15 @@
 {% extends "base.html.j2" %}
 
 {% block title %}
-    {{user.first_name}} {{user.last_name}}
+    User
 {% endblock title %}
 
 {% block body %}
     <img src="{{user.image_url}}" alt="User Profile Image">
-    <h3>{{user.first_name}} {{user.last_name}}</h3>
+    <h3>{{user.full_name}}</h3>
     <a href="/users/{{user.id}}/edit" class="btn btn-secondary">Edit</a>
     <a href="/users/{{user.id}}/delete" class="btn btn-danger">Delete</a>
+    <a href="/users" class="btn btn-success">Back</a>
     </form>
 
 {% endblock body %} 
