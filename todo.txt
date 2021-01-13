@@ -1,3 +1,5 @@
+Change user page to show posts for that user
+
 Testing (UGHHHH)
 
 Finish the homepage "/" so it shows the 5 most recent posts
