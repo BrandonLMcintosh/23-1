@@ -1,0 +1,18 @@
+Testing (UGHHHH)
+
+Finish the homepage "/" so it shows the 5 most recent posts
+    -will need to sort by date descending
+
+Show a friendly date: 
+    -Like "May 1, 2015, 10:30 AM" on each post
+
+Add a custom 404 Error page
+    -Can use 
+    @app.errorhandler(404)
+    def bad_request():
+    """bad request"""
+    reutrn render_template("error/404.html.j2")
+
+Cascade deletion of the user
+    -make sure all of the posts by that user are also deleted
+    -https://docs.sqlalchemy.org/en/14/orm/cascades.html
