@@ -1,7 +1,7 @@
 {% extends "root/base.html.j2" %}
 
 {% block title %}
-    
+    {{post.title}}
 {% endblock title %}
 
 {% block body %}
@@ -13,5 +13,9 @@
         {% endif %}
         
         <p>{{post.content}}</p>
+        <a href="/users/{{user.id}}/posts/{{post.id}}/delete">Delete</a>
+        <a href="{{request.referrer}}" class="btn btn-secondary">Back</a>
     </div>
 {% endblock body %}
+
+{% block back %}{% endblock back %}

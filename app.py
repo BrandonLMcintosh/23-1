@@ -12,14 +12,17 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
 app.config['TESTING'] = True
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
+app.create_jinja_environment()
 
 
 toolbar = DebugToolbarExtension(app)
 connect_db(app)
 db.create_all()
+
 ##################################
 ### START INVIDIDUAL GET ROUTES ##
 ##################################
+
 @app.route('/')
 def index():
     """REDIRECTS IMMEDIATELY TO /USERS"""
@@ -46,9 +49,8 @@ def users_get_user(user_id):
 ##### START  GET/POST ROUTES #####
 ##################################
 
-
 @app.route('/users/new', methods=["GET", "POST"])
-def users_post():
+def users_new():
     """POST ROUTE FOR NEW USER"""
 
     if request.method == "GET":
@@ -135,7 +137,6 @@ def user_posts_edit(user_id, post_id):
 ##### START  DELETE ROUTES #######
 ##################################
 
-
 @app.route('/users/<int:user_id>/delete')
 def users_user_delete(user_id):
     """GET ROUTE FOR USER DELETE"""
@@ -150,7 +151,6 @@ def users_user_delete(user_id):
 
 @app.route('/users/<int:user_id>/posts/<int:post_id>/delete')
 def user_posts_delete(user_id, post_id):
-    pass
-    # need to do: 
+    
     #     -add delete button to user post template
     #     -add logic to remove from db and redirect

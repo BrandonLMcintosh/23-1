@@ -13,6 +13,10 @@
 {%block body%}
 {%endblock body%}
 
+{% block back %}
+<a href="{{request.referrer}}" class="btn btn-secondary">Back</a>
+{% endblock back %}
+
 <body>
 </body>
 </html>
