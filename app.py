@@ -17,10 +17,11 @@ app.create_jinja_environment()
 
 toolbar = DebugToolbarExtension(app)
 connect_db(app)
+db.drop_all()
 db.create_all()
 
 ##################################
-### START INVIDIDUAL GET ROUTES ##
+### INVIDIDUAL GET ROUTES ##
 ##################################
 
 @app.route('/')
@@ -43,10 +44,10 @@ def users_get_user(user_id):
 
     user = User.query.get_or_404(user_id)
 
-    return render_template("user/user.html.j2", user=user)
+    return render_template("user/main.html.j2", user=user)
 
 ##################################
-##### START  GET/POST ROUTES #####
+##### GET/POST ROUTES #####
 ##################################
 
 @app.route('/users/new', methods=["GET", "POST"])
@@ -55,7 +56,7 @@ def users_new():
 
     if request.method == "GET":
 
-        return render_template("user/new_user.html.j2")
+        return render_template("user/new.html.j2")
 
     elif request.method == "POST":
 
@@ -86,7 +87,7 @@ def users_user_edit(user_id):
 
     if request.method == "GET":
         
-        return render_template("user/edit_user.html.j2", user=user)
+        return render_template("user/edit.html.j2", user=user)
     
     elif request.method == "POST": 
 
@@ -112,13 +113,13 @@ def user_posts_edit(user_id, post_id):
 
     if request.method == "GET":
 
-        return render_template('post/post.html.j2', user=user, post=post)
+        return render_template('post/main.html.j2', user=user, post=post)
 
     elif request.method == "POST":
 
         title = request.form["title"]
         content = request.form["content"]
-        updated_at = datetime.utcnow()
+        updated_at = datetime.now()
 
         post.title = title
         post.content = content
@@ -133,8 +134,37 @@ def user_posts_edit(user_id, post_id):
 
         return redirect(f'/users/{user_id}/posts/{post_id}')
 
+
+@app.route('/users/<int:user_id>/posts/new', methods=["GET", "POST"])
+def user_posts_new(user_id):
+    """render new post page or process post request from rendered page"""
+    user = User.query.get_or_404(user_id)
+    if request.method == "GET":
+
+        return render_template('post/new.html.j2', user=user)
+
+    elif request.method == "POST":
+
+        title = request.form["title"]
+        content = request.form["content"]
+        created_at = datetime.now()
+
+        post = Post(title=title, content=content, created_at=created_at, user_id=user_id)
+
+        db.session.add(post)
+        db.session.commit()
+
+        return redirect(f'/users/{user_id}')
+
+    else:
+        
+        return redirect(f'/users/{user_id}')
+
+
+
+
 ##################################
-##### START  DELETE ROUTES #######
+##### DELETE ROUTES #######
 ##################################
 
 @app.route('/users/<int:user_id>/delete')
@@ -151,6 +181,55 @@ def users_user_delete(user_id):
 
 @app.route('/users/<int:user_id>/posts/<int:post_id>/delete')
 def user_posts_delete(user_id, post_id):
+    """Grab post from DB, delete from DB"""
+
+##################################
+##### ERROR ROUTES #########
+##################################
+
+@app.errorhandler(404)
+def page_not_found(error):
+    """redirect to a safe page with a back button"""
+
+    return render_template('error/404.html.j2', error=error)
+
     
-    #     -add delete button to user post template
-    #     -add logic to remove from db and redirect
+
+#         .--'''''''''--.
+#      .'      .---.      '.
+#     /    .-----------.    \
+#    /        .-----.        \
+#    |       .-.   .-.       |
+#    |      /   \ /   \      |
+#     \    | .-. | .-. |    /
+#      '-._| | | | | | |_.-'
+#          | '-' | '-' |
+#           \___/ \___/
+#        _.-'  /   \  `-._
+#      .' _.--|     |--._ '.
+#      ' _...-|     |-..._ '
+#             |     |
+#             '.___.'
+#               | |
+#              _| |_
+#             /\( )/\
+#            /  ` '  \
+#           | |     | |
+#           '-'     '-'
+#           | |     | |
+#           | |     | |
+#           | |-----| |
+#        .`/  |     | |/`.
+#        |    |     |    |
+#        '._.'| .-. |'._.'
+#              \ | /
+#              | | |
+#              | | |
+#              | | |
+#             /| | |\
+#           .'_| | |_`.
+#           `. | | | .'
+#        .    /  |  \    .
+#       /o`.-'  / \  `-.`o\
+#      /o  o\ .'   `. /o  o\
+#      `.___.'       `.___.'

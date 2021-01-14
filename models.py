@@ -25,6 +25,8 @@ class User(db.Model):
     last_name = db.Column(db.Text, nullable=False)
     image_url = db.Column(db.Text, nullable=False, default=default_pic)
 
+    posts = db.relationship("Post", backref="users")
+
 
     @classmethod
     def query_by_first_name(cls):
@@ -41,12 +43,18 @@ class User(db.Model):
 class Post(db.Model):
     """Defines post. User to many posts, post to one user"""
 
+    __tablename__ = "posts"
+
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     title = db.Column(db.Text, nullable=False)
     content = db.Column(db.Text, nullable=False)
-    create_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow())
+    create_at = db.Column(
+        db.DateTime, 
+        nullable=False, 
+        default=datetime.now())
     updated_at = db.Column(db.DateTime)
-    user = db.Relationship('User', backref='posts')
+
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
 
 def connect_db(app):
     """connects to the db"""

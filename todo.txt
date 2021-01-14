@@ -14,7 +14,3 @@ Add a custom 404 Error page
     def bad_request():
     """bad request"""
     reutrn render_template("error/404.html.j2")
-
-Cascade deletion of the user
-    -make sure all of the posts by that user are also deleted
-    -https://docs.sqlalchemy.org/en/14/orm/cascades.html

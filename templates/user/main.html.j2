@@ -1,0 +1,19 @@
+{% extends "root/base.html.j2" %}
+
+{% block title %}
+    User
+{% endblock title %}
+
+{% block body %}
+    <div class="container">
+        <div class="row">
+            <img src="{{user.image_url}}" alt="User Profile Image" class="col-3">
+            <div class="col">
+                <h3 class="col">{{user.full_name}}</h3>
+                <a href="/users/{{user.id}}/edit" class="btn btn-secondary col">Edit</a>
+                <a href="/users/{{user.id}}/delete" class="btn btn-danger col">Delete</a>
+                <a href="/user/{{user.id}}/posts/new" class="btn btn-primary">New Post</a>
+            </div>
+        </div> 
+    </div>
+{% endblock body %}
