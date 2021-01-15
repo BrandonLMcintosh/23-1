@@ -1,6 +1,6 @@
 """Blogly application."""
 from re import template
-from flask import Flask, render_template, redirect, request
+from flask import Flask, render_template, redirect, request, flash
 from models import db, connect_db, User, Post
 from flask_debugtoolbar import DebugToolbarExtension
 from datetime import datetime
@@ -26,8 +26,11 @@ db.create_all()
 
 @app.route('/')
 def index():
-    """REDIRECTS IMMEDIATELY TO /USERS"""
-    return redirect("/users")
+    """DISPLAYS 5 MOST RECENT POSTS"""
+    posts = db.session.query(Post).order_by(Post.id.desc()).limit(5)
+
+    return render_template("root/first_5.html.j2", posts=posts)
+
 
 
 @app.route('/users')
@@ -44,7 +47,18 @@ def users_get_user(user_id):
 
     user = User.query.get_or_404(user_id)
 
-    return render_template("user/main.html.j2", user=user)
+    return render_template("user/main.html.j2", user=user, back='/users')
+
+@app.route('/users/<int:user_id>/posts/<int:post_id>')
+def users_get_post(user_id, post_id):
+    """VIEW A SPECIFIC POST"""
+
+    post = db.session.query(Post).get(post_id)
+    user = db.session.query(User).get(user_id)
+
+    return render_template('post/main.html.j2', post=post, user=user, back=f'/users/{user_id}')
+
+
 
 ##################################
 ##### GET/POST ROUTES #####
@@ -56,7 +70,7 @@ def users_new():
 
     if request.method == "GET":
 
-        return render_template("user/new.html.j2")
+        return render_template("user/new.html.j2", back='/users')
 
     elif request.method == "POST":
 
@@ -87,9 +101,9 @@ def users_user_edit(user_id):
 
     if request.method == "GET":
         
-        return render_template("user/edit.html.j2", user=user)
+        return render_template("user/edit.html.j2", user=user, back=f'/users/{user_id}')
     
-    elif request.method == "POST": 
+    elif request.method == "POST":
 
         db.session.add(user)
         user.first_name = request.form["first_name"]
@@ -102,46 +116,17 @@ def users_user_edit(user_id):
     else: 
 
         return redirect(f'/users/{user_id}')
-
-
-@app.route('/users/<int:user_id>/posts/<int:post_id>', methods=["GET", "POST"])
-def user_posts_edit(user_id, post_id):
-    """POST route for user post edit. Doesn't change post.created_at or post.user"""
-
-    user = db.session.query(User).get(user_id)
-    post = db.session.query(Post).get(post_id)
-
-    if request.method == "GET":
-
-        return render_template('post/main.html.j2', user=user, post=post)
-
-    elif request.method == "POST":
-
-        title = request.form["title"]
-        content = request.form["content"]
-        updated_at = datetime.now()
-
-        post.title = title
-        post.content = content
-        post.updated_at = updated_at
-
-        db.session.add(post)
-        db.session.commit()
-
-        return redirect(f'/users/{user_id}/posts/{post_id}')
     
-    else:
-
-        return redirect(f'/users/{user_id}/posts/{post_id}')
-
 
 @app.route('/users/<int:user_id>/posts/new', methods=["GET", "POST"])
 def user_posts_new(user_id):
     """render new post page or process post request from rendered page"""
+
     user = User.query.get_or_404(user_id)
+
     if request.method == "GET":
 
-        return render_template('post/new.html.j2', user=user)
+        return render_template('post/new.html.j2', user=user, back=f'/users/{user_id}')
 
     elif request.method == "POST":
 
@@ -161,6 +146,35 @@ def user_posts_new(user_id):
         return redirect(f'/users/{user_id}')
 
 
+@app.route('/users/<int:user_id>/posts/<int:post_id>/edit', methods=["GET", "POST"])
+def user_posts_edit(user_id, post_id):
+    """POST route for user post edit. Doesn't change post.created_at or post.user"""
+
+    user = db.session.query(User).get(user_id)
+    post = db.session.query(Post).get(post_id)
+
+    if request.method == "GET":
+
+        return render_template('post/edit.html.j2', user=user, post=post, back=f'/users/{user_id}/posts/{post_id}')
+
+    elif request.method == "POST":
+
+        title = request.form["title"]
+        content = request.form["content"]
+        updated_at = datetime.now().strftime('%A, %B %d, %Y')
+
+        post.title = title
+        post.content = content
+        post.updated_at = updated_at
+
+        db.session.add(post)
+        db.session.commit()
+
+        return redirect(f'/users/{user_id}/posts/{post_id}')
+    
+    else:
+
+        return redirect(f'/users/{user_id}/posts/{post_id}')
 
 
 ##################################
@@ -183,6 +197,13 @@ def users_user_delete(user_id):
 def user_posts_delete(user_id, post_id):
     """Grab post from DB, delete from DB"""
 
+    post = db.session.query(Post).get(post_id)
+    
+    db.session.delete(post)
+    db.session.commit()
+
+    return redirect(f'/users/{user_id}')
+
 ##################################
 ##### ERROR ROUTES #########
 ##################################
@@ -191,7 +212,7 @@ def user_posts_delete(user_id, post_id):
 def page_not_found(error):
     """redirect to a safe page with a back button"""
 
-    return render_template('error/404.html.j2', error=error)
+    return render_template('error/404.html.j2', error=error, back=f'/users')
 
     
 

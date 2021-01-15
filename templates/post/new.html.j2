@@ -5,11 +5,20 @@
 {% endblock title %}
 
 {% block body %}
-    <form action="/users/{{post.user.id}}/posts/new" method="POST">
-        <input type="text" name="title">
-        <input type="textarea" name="content">
-        <input type="submit" class="btn btn-success">
+<div class="container">
+    <form action="/users/{{user.id}}/posts/new" method="POST">
+        <div class="row">
+            <input type="text" name="title" placeholder="Title">
+        </div>
+        <div class="row">
+            <input type="textarea" name="content" placeholder="Content">
+        </div>
+        <div class="row">
+            <input type="submit" class="btn btn-success">
+        </div>
     </form>
+</div>
+
 {% endblock body %}
 
 {% block back %}{% endblock back %}

@@ -1,0 +1,22 @@
+{% extends "root/base.html.j2" %}
+
+{% block body %}
+    <div class="column">
+        {% for post in posts %}
+            <div class="row">
+                </a><h2 class="mb-1s"><a href="/users/{{post.user_id}}">{{post.title}}</a></h2>
+                <sub>
+                Posted by {{post.user_id}} on {{post.created_at}} 
+                {% if  post.updated_at%}
+                     -- Updated at {post.updated_at}
+                {% endif %}
+                </sub>
+                <p class="my-5">{{post.content}}</p>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock body %}
+
+{% block back %}
+    <a href="/users" class="btn btn-primary">View Users</a>
+{% endblock back %}

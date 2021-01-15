@@ -48,10 +48,10 @@ class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     title = db.Column(db.Text, nullable=False)
     content = db.Column(db.Text, nullable=False)
-    create_at = db.Column(
-        db.DateTime, 
+    created_at = db.Column(
+        db.Text, 
         nullable=False, 
-        default=datetime.now())
+        default=datetime.now().strftime('%A, %B %d, %Y'))
     updated_at = db.Column(db.DateTime)
 
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
