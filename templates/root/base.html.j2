@@ -10,10 +10,13 @@
 </head>
 <h1 class="text-center mb-5">{% block title %}{% endblock title %}</h1>
 
-{%block body%}
-{%endblock body%}
+{% block body %}
+{% endblock body %}
 
-<a href="{{back}}" class="btn btn-primary">Back</a>
+{% block  back%}
+  <a href="{{back}}" class="btn btn-primary">Back</a> 
+{% endblock  back %}
+
 
 
 <body>
