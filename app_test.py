@@ -1,10 +1,11 @@
 from unittest import TestCase
 from app import app
-from models import db, User
+from models import db, User, Post
 
 
 class Test_App(TestCase):
     """Tests for 4 routes in app"""
+
 
     def setUp(self):
         user = User(first_name="Thomas", last_name="Wright", image_url="FAKE IMAGE")
@@ -24,8 +25,7 @@ class Test_App(TestCase):
         with app.test_client() as client:
             resp = client.get('/')
 
-            self.assertEqual(resp.status_code, 302)
-            self.assertEqual(resp.location, "http://localhost/users")
+            self.assertEqual(resp.status_code, 200)
 
 
     def test_get_users(self):
@@ -76,3 +76,67 @@ class Test_App(TestCase):
             resp = client.get("/users/1/delete")
             html = resp.get_data(as_text=True)
             self.assertNotIn(user.full_name, html)
+
+
+class Test_posts(TestCase):
+
+
+    def setUp(self):
+        user = User(first_name="1", last_name="1")
+        post = Post(title="3.14159265359", content="1", user_id=1)
+        db.session.add(user)
+        db.session.add(post)
+        db.session.commit()
+
+
+    def tearDown(self):
+        db.drop_all()
+        db.create_all()
+
+
+    def test_post_new_post(self):
+        with app.test_client() as client:
+            resp = client.get('/users/1/posts/new')
+            html = resp.get_data(as_text=True)
+        
+            self.assertIn('placeholder="Title"', html)
+
+
+    def test_get_new_post_page(self):
+        with app.test_client() as client:
+            resp = client.post('/users/1/posts/new', data={'title':'2', 'content':'2'})
+            html = resp.get_data(as_text=True)
+
+            post = Post.query.filter_by(title='2').first()
+
+            self.assertEqual(post.title, '2')
+
+
+    def test_get_post(self):
+        with app.test_client() as client:
+            resp = client.get('/users/1/posts/1')
+            html = resp.get_data(as_text=True)
+
+            self.assertIn('3.14159265359', html)
+
+    
+    def test_edit_post(self):
+        with app.test_client() as client:
+            resp = client.get('/users/1/posts/1/edit')
+            html = resp.get_data(as_text=True)
+
+            self.assertIn('3.14159265359', html)
+        
+            resp = client.post('/users/1/posts/1/edit', data={'title':'3.14159265359', 'content':'Math is Cool!'})
+            post = Post.query.get(1)
+
+            self.assertEqual(post.content, 'Math is Cool!')
+
+    
+    def test_delete_post(self):
+        with app.test_client() as client:
+            resp = client.get('/users/1/posts/1/delete')
+            
+            numPosts = Post.query.count()
+
+            self.assertEqual(numPosts, 0)
