@@ -2,7 +2,6 @@
 
 """Primary DB Class for User object"""
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import backref
 from datetime import datetime
 
 db = SQLAlchemy()
@@ -24,7 +23,6 @@ class User(db.Model):
     last_name = db.Column(db.Text, nullable=False)
     image_url = db.Column(db.Text, nullable=False, default=default_pic)
 
-    posts = db.relationship("Post", backref="user")
 
     @classmethod
     def query_by_first_name(cls):
@@ -53,27 +51,32 @@ class Post(db.Model):
         created: {p.created_at} 
         user: {p.user}'''
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    title = db.Column(db.Text, nullable=False)
-    content = db.Column(db.Text, nullable=False)
+    id = db.Column(
+        db.Integer,
+        primary_key=True,
+        autoincrement=True)
+    title = db.Column(
+        db.Text,
+        nullable=False)
+    content = db.Column(
+        db.Text,
+        nullable=False)
     created_at = db.Column(
         db.Text, 
         nullable=False, 
         default=datetime.now().strftime('%A, %B %d, %Y'))
-    updated_at = db.Column(db.DateTime)
+    updated_at = db.Column(
+        db.DateTime)
+    user_id = db.Column(
+        db.Integer, 
+        db.ForeignKey("users.id"))
+    user = db.relationship('User', backref=db.backref('posts', cascade="All, Delete"))
 
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
 
     tags = db.relationship(
         'Tag',
         secondary='posts_tags',
         backref='posts')
-
-
-def connect_db(app):
-    """connects to the db"""
-    db.app = app
-    db.init_app(app)
 
 
 class PostTag(db.Model):
@@ -109,3 +112,9 @@ class Tag(db.Model):
         db.Text,
         nullable=False,
         unique=True)
+
+
+def connect_db(app):
+    """connects to the db"""
+    db.app = app
+    db.init_app(app)
