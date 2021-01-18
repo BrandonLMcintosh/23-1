@@ -1,0 +1,15 @@
+{% extends "root/base.html.j2" %}
+{% block title %}
+Tags
+{% endblock title %}
+
+{% block body %}
+    <ul>
+        {% for tag in tags %}
+            <li><a href="/tags/{{tag.id}}">{{tag.name}}</a></li>
+        {% endfor %}
+    </ul>
+
+    <a href="/tags/new" class="btn btn-success">Add Tag</a>
+
+{% endblock body %}

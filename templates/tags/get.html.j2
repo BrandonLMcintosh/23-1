@@ -1,0 +1,17 @@
+{% extends "root/base.html.j2" %}
+
+{% block title %}
+    {{tag.name}}
+{% endblock title %}
+
+{% block body %}
+    <ul>
+        {% for post in tag.posts %}
+            <li><a href="/posts/{{post.id}}">{{post.title}}</a>  by {{post.user.full_name}}</li>
+        {% endfor %}
+    </ul>
+    <a href="{{back}}" class="">Back</a>
+    <a href="/tags/{{tag.id}}/edit">Edit</a>
+    <a href="/tags/{{tag.id}}/delete">Delete</a>
+    
+{% endblock body %}

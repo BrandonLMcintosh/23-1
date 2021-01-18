@@ -12,8 +12,18 @@
             <sub class="mb-5">{{post.updated_at}}</sub>
         {% endif %}
         <p class="mt-5">{{post.content}}</p>
+        <h4>Tags:
+        {% for tag in post.tags %}
+            <h6 class="badge bg-primary"><a href="/tags/{{tag.id}}">{{tag.name}}</a></h6>
+        {% endfor %}
+        
+        </h4>
+
+        
+        {% endfor %}<h6 class="badge bg-primary"></h6>
     </div>
+
+    <a href="/posts/{{post.id}}/edit" class="btn btn-secondary">Edit</a>
+    <a href="/posts/{{post.id}}/delete" class="btn btn-danger">Delete</a>
     
-    <a href="/users/{{user.id}}/posts/{{post.id}}/delete" class="btn btn-danger">Delete</a>
-    <a href="/users/{{user.id}}/posts/{{post.id}}/edit" class="btn btn-secondary">Edit</a>
 {% endblock body %}

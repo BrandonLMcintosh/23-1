@@ -20,57 +20,36 @@ connect_db(app)
 db.drop_all()
 db.create_all()
 
-##################################
-### INVIDIDUAL GET ROUTES ##
-##################################
+
+###########################################################################################################
+#####INDEX#################################################################################################
+###########################################################################################################
+
 
 @app.route('/')
 def index():
-    """DISPLAYS 5 MOST RECENT POSTS"""
-    posts = db.session.query(Post).order_by(Post.id.desc()).limit(5)
 
-    return render_template("root/first_5.html.j2", posts=posts)
+    return redirect('/posts')
 
+
+###########################################################################################################
+#####USERS#################################################################################################
+###########################################################################################################
 
 
 @app.route('/users')
-def users_get():
-    """GET ROUTE FOR USER LIST (INDEX)"""
+def users_list():
 
     users = User.query.order_by(User.first_name).all()
-    return render_template("root/user_list.html.j2", users=users)
+    return render_template("users/list.html.j2", users=users)
 
-
-@app.route('/users/<int:user_id>')
-def users_get_user(user_id):
-    """GET ROUTE FOR INDIVIDUAL USER"""
-
-    user = User.query.get_or_404(user_id)
-
-    return render_template("user/main.html.j2", user=user, back='/users')
-
-@app.route('/users/<int:user_id>/posts/<int:post_id>')
-def users_get_post(user_id, post_id):
-    """VIEW A SPECIFIC POST"""
-
-    post = db.session.query(Post).get(post_id)
-    user = db.session.query(User).get(user_id)
-
-    return render_template('post/main.html.j2', post=post, user=user, back=f'/users/{user_id}')
-
-
-
-##################################
-##### GET/POST ROUTES #####
-##################################
 
 @app.route('/users/new', methods=["GET", "POST"])
 def users_new():
-    """POST ROUTE FOR NEW USER"""
 
     if request.method == "GET":
 
-        return render_template("user/new.html.j2", back='/users')
+        return render_template("users/new.html.j2", back='/users')
 
     elif request.method == "POST":
 
@@ -93,15 +72,22 @@ def users_new():
         return redirect('/users')
 
 
+@app.route('/users/<int:user_id>')
+def users_get(user_id):
+
+    user = User.query.get_or_404(user_id)
+
+    return render_template("users/get.html.j2", user=user, back='/users')
+
+
 @app.route('/users/<int:user_id>/edit', methods=["GET", "POST"])
-def users_user_edit(user_id):
-    """POST/GET ROUTE FOR USER EDIT"""
+def users_edit(user_id):
 
     user = db.session.query(User).get_or_404(user_id)
 
     if request.method == "GET":
         
-        return render_template("user/edit.html.j2", user=user, back=f'/users/{user_id}')
+        return render_template("users/edit.html.j2", user=user, back=f'/users/{user_id}')
     
     elif request.method == "POST":
 
@@ -115,18 +101,41 @@ def users_user_edit(user_id):
     
     else: 
 
-        return redirect(f'/users/{user_id}')
-    
+        return redirect(f'/users')
 
-@app.route('/users/<int:user_id>/posts/new', methods=["GET", "POST"])
-def user_posts_new(user_id):
-    """render new post page or process post request from rendered page"""
+
+@app.route('/users/<int:user_id>/delete')
+def users_delete(user_id):
+
+    user = User.query.get_or_404(user_id)
+
+    db.session.delete(user)
+    db.session.commit()
+
+    return redirect('/users')
+
+
+###########################################################################################################
+#####POSTS#################################################################################################
+###########################################################################################################
+
+
+@app.route('/posts')
+def posts_list():
+
+    posts = db.session.query(Post).order_by(Post.id.desc()).limit(5)
+
+    return render_template("posts/list.html.j2", posts=posts)
+
+
+@app.route('/posts/new/<int:user_id>', methods=["GET", "POST"])
+def posts_new(user_id):
 
     user = User.query.get_or_404(user_id)
 
     if request.method == "GET":
 
-        return render_template('post/new.html.j2', user=user, back=f'/users/{user_id}')
+        return render_template('posts/new.html.j2', user=user, back=f'/users/{user_id}')
 
     elif request.method == "POST":
 
@@ -143,19 +152,27 @@ def user_posts_new(user_id):
 
     else:
         
-        return redirect(f'/users/{user_id}')
+        return redirect(f'/posts')
 
 
-@app.route('/users/<int:user_id>/posts/<int:post_id>/edit', methods=["GET", "POST"])
-def user_posts_edit(user_id, post_id):
+@app.route('/posts/<int:post_id>')
+def posts_get(post_id):
+
+    post = Post.query.get_or_404(post_id)
+
+    return render_template('posts/get.html.j2', post=post)
+
+
+@app.route('/posts/<int:post_id>/edit', methods=["GET", "POST"])
+def posts_edit(post_id):
     """POST route for user post edit. Doesn't change post.created_at or post.user"""
 
-    user = db.session.query(User).get(user_id)
-    post = db.session.query(Post).get(post_id)
+    user = User.query.get(user_id)
+    post = Post.query.get(post_id)
 
     if request.method == "GET":
 
-        return render_template('post/edit.html.j2', user=user, post=post, back=f'/users/{user_id}/posts/{post_id}')
+        return render_template('posts/edit.html.j2', user=user, post=post, back=f'/users/{user_id}/posts/{post_id}')
 
     elif request.method == "POST":
 
@@ -174,83 +191,99 @@ def user_posts_edit(user_id, post_id):
     
     else:
 
-        return redirect(f'/users/{user_id}/posts/{post_id}')
+        return redirect(f'/users')
 
 
-##################################
-##### DELETE ROUTES #######
-##################################
-
-@app.route('/users/<int:user_id>/delete')
-def users_user_delete(user_id):
-    """GET ROUTE FOR USER DELETE"""
-
-    user = User.query.get_or_404(user_id)
-
-    db.session.delete(user)
-    db.session.commit()
-
-    return redirect('/users')
-
-
-@app.route('/users/<int:user_id>/posts/<int:post_id>/delete')
-def user_posts_delete(user_id, post_id):
+@app.route('/posts/<int:post_id>/delete')
+def posts_delete(post_id):
     """Grab post from DB, delete from DB"""
 
-    post = db.session.query(Post).get(post_id)
+    post = Post.query.get(post_id)
     
     db.session.delete(post)
     db.session.commit()
 
     return redirect(f'/users/{user_id}')
 
-##################################
-##### ERROR ROUTES #########
-##################################
+
+##########################################################################################################
+#####TAGS#################################################################################################
+##########################################################################################################
+
+
+@app.route('/tags')
+def tags_list():
+
+    return render_template('tags/list.html.j2')
+
+
+@app.route('/tags/new', methods=["GET", "POST"])
+def tags_new():
+
+    if request.method == "GET":
+
+        return render_template('tags/new.html.j2', back="/tags")
+
+    elif request.method == "POST":
+
+        name = request.form['name']
+        tag = Tag(name=name)
+        db.session.add(tag)
+        db.session.commit()
+
+        return redirect('/tags')
+        
+    else: 
+
+        return redirect('/tags')
+
+
+@app.route('/tags/<int:tag_id>')
+def tags_get(tag_id):
+
+    tag = Tag.query.get(tag_id)
+
+    return render_template('tags/get.html.j2', tag=tag, back='/tags')
+
+
+@app.route('/tags/<int:tag_id>/edit', methods=["GET", "POST"])
+def tags_edit(tag_id):
+
+    tag = Tag.query.get(tag_id)
+    
+    if request.method == "GET":
+
+        return render_template('tags/edit.html.j2', tag=tag, back=f'/tags/{tag.id}')
+
+    elif request.method == "POST":
+
+        name = request.form['name']
+        tag.name = name
+        db.session.add(tag)
+        db.session.commit()
+
+    else:
+
+        return redirect('/tags')
+
+
+@app.route('/tags/<int:tag_id>/delete')
+def tags_delete(tag_id):
+
+    tag = Tag.query.get(tag_id)
+    
+    db.session.delete(tag)
+    db.session.commit()
+
+    return redirect('/tags')
+
+
+###########################################################################################################
+#####CATCH#################################################################################################
+###########################################################################################################
 
 @app.errorhandler(404)
 def page_not_found(error):
     """redirect to a safe page with a back button"""
 
     return render_template('error/404.html.j2', error=error, back=f'/users')
-
-    
-
-#         .--'''''''''--.
-#      .'      .---.      '.
-#     /    .-----------.    \
-#    /        .-----.        \
-#    |       .-.   .-.       |
-#    |      /   \ /   \      |
-#     \    | .-. | .-. |    /
-#      '-._| | | | | | |_.-'
-#          | '-' | '-' |
-#           \___/ \___/
-#        _.-'  /   \  `-._
-#      .' _.--|     |--._ '.
-#      ' _...-|     |-..._ '
-#             |     |
-#             '.___.'
-#               | |
-#              _| |_
-#             /\( )/\
-#            /  ` '  \
-#           | |     | |
-#           '-'     '-'
-#           | |     | |
-#           | |     | |
-#           | |-----| |
-#        .`/  |     | |/`.
-#        |    |     |    |
-#        '._.'| .-. |'._.'
-#              \ | /
-#              | | |
-#              | | |
-#              | | |
-#             /| | |\
-#           .'_| | |_`.
-#           `. | | | .'
-#        .    /  |  \    .
-#       /o`.-'  / \  `-.`o\
-#      /o  o\ .'   `. /o  o\
-#      `.___.'       `.___.'

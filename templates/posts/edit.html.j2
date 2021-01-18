@@ -1,0 +1,17 @@
+{% extends "root/base.html.j2" %}
+
+{% block title %}
+    Edit Post: {{post.titles}}
+{% endblock title %}
+
+{% block body %}
+    <form action="/posts/{{post.id}}/edit" method="POST">
+        <input type="text" name="title" value="{{post.title}}">
+        <input type="textarea" name="content" value="{{post.content}}">
+        <input type="submit" class="btn btn-success">
+        <a href="{{back}}" class="btn btn-danger">Cancel</a>
+    </form>
+{% endblock body %}
+
+{% block back %}
+{% endblock back %}

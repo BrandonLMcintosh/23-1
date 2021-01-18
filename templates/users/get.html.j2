@@ -11,13 +11,13 @@
             <div class="col">
                 <a href="/users/{{user.id}}/edit" class="btn btn-secondary col">Edit</a>
                 <a href="/users/{{user.id}}/delete" class="btn btn-danger col">Delete</a>
-                <a href="/users/{{user.id}}/posts/new" class="btn btn-primary">New Post</a>
+                <a href="/posts/new/{{user.id}}" class="btn btn-primary">Add Post</a>
             </div>
         </div>
         <div class="row">
             <ul>
                 {% for post in user.posts %}
-                    <li><a href="/users/{{user.id}}/posts/{{post.id}}">{{post.title}}</a></li>
+                    <li><a href="/posts/{{post.id}}">{{post.title}}</a></li>
                 {% endfor %}
             </ul>
         </div>

@@ -46,11 +46,12 @@ class Post(db.Model):
 
     def __repr__(self):
         p = self
-        return f'id: {p.id} 
+        return f'''
+        id: {p.id} 
         title: {p.title} 
         content: {p.content} 
         created: {p.created_at} 
-        user: {p.user}'
+        user: {p.user}'''
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     title = db.Column(db.Text, nullable=False)

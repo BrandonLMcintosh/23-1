@@ -9,6 +9,10 @@ New User
         <input type="text" name="first_name" placeholder="first name">
         <input type="text" name="last_name" placeholder="last name">
         <input type="text" name="image_url" placeholder="Profile picture URL">
-        <input type="submit" value="Submit New User">
+        <input type="submit" value="Add" class="btn btn-success">
+        <a href="{{back}}">Cancel</a>
     </form>
 {% endblock body %}
+
+{% block back %}
+{% endblock back %}
