@@ -167,12 +167,11 @@ def posts_get(post_id):
 def posts_edit(post_id):
     """POST route for user post edit. Doesn't change post.created_at or post.user"""
 
-    user = User.query.get(user_id)
     post = Post.query.get(post_id)
 
     if request.method == "GET":
 
-        return render_template('posts/edit.html.j2', user=user, post=post, back=f'/users/{user_id}/posts/{post_id}')
+        return render_template('posts/edit.html.j2', post=post, back=f'/posts/{post_id}')
 
     elif request.method == "POST":
 
@@ -187,7 +186,7 @@ def posts_edit(post_id):
         db.session.add(post)
         db.session.commit()
 
-        return redirect(f'/users/{user_id}/posts/{post_id}')
+        return redirect(f'/posts/{post_id}')
     
     else:
 
@@ -199,11 +198,12 @@ def posts_delete(post_id):
     """Grab post from DB, delete from DB"""
 
     post = Post.query.get(post_id)
+    user = post.user_id
     
     db.session.delete(post)
     db.session.commit()
 
-    return redirect(f'/users/{user_id}')
+    return redirect(f'/users/{user}')
 
 
 ##########################################################################################################
@@ -271,7 +271,7 @@ def tags_edit(tag_id):
 def tags_delete(tag_id):
 
     tag = Tag.query.get(tag_id)
-    
+
     db.session.delete(tag)
     db.session.commit()
 
