@@ -17,7 +17,7 @@ app.create_jinja_environment()
 
 toolbar = DebugToolbarExtension(app)
 connect_db(app)
-db.drop_all()
+# db.drop_all()
 db.create_all()
 
 
@@ -214,7 +214,9 @@ def posts_delete(post_id):
 @app.route('/tags')
 def tags_list():
 
-    return render_template('tags/list.html.j2')
+    tags = Tag.query.all()
+
+    return render_template('tags/list.html.j2', tags=tags)
 
 
 @app.route('/tags/new', methods=["GET", "POST"])
@@ -262,6 +264,8 @@ def tags_edit(tag_id):
         db.session.add(tag)
         db.session.commit()
 
+        return redirect(f'/tags/{tag.id}')
+
     else:
 
         return redirect('/tags')
@@ -286,4 +290,4 @@ def tags_delete(tag_id):
 def page_not_found(error):
     """redirect to a safe page with a back button"""
 
-    return render_template('error/404.html.j2', error=error, back=f'/users')
+    return render_template('root/404.html.j2', error=error, back=f'/users')

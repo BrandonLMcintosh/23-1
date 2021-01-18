@@ -70,7 +70,7 @@ class Post(db.Model):
     user_id = db.Column(
         db.Integer, 
         db.ForeignKey("users.id"))
-    user = db.relationship('User', backref=db.backref('posts', cascade="All, Delete"))
+    user = db.relationship('User', backref=db.backref('posts', cascade="all, delete-orphan"))
 
 
     tags = db.relationship(

@@ -9,9 +9,10 @@
         <div class="row">
             <img src="{{user.image_url}}" alt="User Profile Image" class="col-3">
             <div class="col">
-                <a href="/users/{{user.id}}/edit" class="btn btn-secondary col">Edit</a>
+                <a href="{{back}}" class="btn btn-primary">Back</a>
+                <a href="/users/{{user.id}}/edit" class="btn btn-warning col">Edit</a>
                 <a href="/users/{{user.id}}/delete" class="btn btn-danger col">Delete</a>
-                <a href="/posts/new/{{user.id}}" class="btn btn-primary">Add Post</a>
+                <a href="/posts/new/{{user.id}}" class="btn btn-success">Add Post</a>
             </div>
         </div>
         <div class="row">

@@ -8,10 +8,7 @@ Edit User {{user.full_name}}
         <input type="text" name="first_name" value="{{user.first_name}}">
         <input type="text" name="last_name" value="{{user.last_name}}">
         <input type="text" name="image_url" value="{{user.image_url}}">
-        <input type="submit" value="Confirm Edits" class="btn btn-success">
+        <input type="submit" value="Edit" class="btn btn-warning">
         <a href="{{back}}" class="btn btn-danger">Cancel</a>
     </form>
 {% endblock body %}
-
-{% block back %}
-{% endblock back %}
