@@ -18,10 +18,23 @@ class User(db.Model):
         u = self
         return f"User {u.id} {u.first_name} {u.last_name} {u.image_url}"
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    first_name = db.Column(db.Text, nullable=False)
-    last_name = db.Column(db.Text, nullable=False)
-    image_url = db.Column(db.Text, nullable=False, default=default_pic)
+    id = db.Column(
+        db.Integer, 
+        primary_key=True, 
+        autoincrement=True)
+
+    first_name = db.Column(
+        db.Text, 
+        nullable=False)
+
+    last_name = db.Column(
+        db.Text, 
+        nullable=False)
+
+    image_url = db.Column(
+        db.Text, 
+        nullable=False, 
+        default=default_pic)
 
 
     @classmethod
@@ -55,23 +68,25 @@ class Post(db.Model):
         db.Integer,
         primary_key=True,
         autoincrement=True)
+
     title = db.Column(
         db.Text,
         nullable=False)
+
     content = db.Column(
         db.Text,
         nullable=False)
+
     created_at = db.Column(
         db.Text, 
         nullable=False, 
         default=datetime.now().strftime('%A, %B %d, %Y'))
-    updated_at = db.Column(
-        db.DateTime)
+
     user_id = db.Column(
         db.Integer, 
         db.ForeignKey("users.id"))
-    user = db.relationship('User', backref=db.backref('posts', cascade="all, delete-orphan"))
 
+    user = db.relationship('User', backref=db.backref('posts', cascade="all, delete-orphan"))
 
     tags = db.relationship(
         'Tag',
@@ -88,6 +103,7 @@ class PostTag(db.Model):
         db.Integer,
         db.ForeignKey('posts.id'),
         primary_key=True)
+
     tag_id = db.Column(
         db.Integer,
         db.ForeignKey('tags.id'),
@@ -108,11 +124,50 @@ class Tag(db.Model):
         db.Integer,
         primary_key=True,
         autoincrement=True)
+
     name = db.Column(
         db.Text,
         nullable=False,
         unique=True)
+    
 
+    @classmethod
+    def grab_tags(cls, tag_names):
+        """Takes List of tag names and converts to list of corresponding tag objects"""
+
+        tag_list = []
+
+        for name in tag_names:
+
+            tag = cls.query.filter(cls.name==name).first()
+            tag_list.append(tag)
+
+        return tag_list
+
+
+    @classmethod
+    def change_tags(cls, post, tags):
+        """Compares returned list of tags with post.tags. Adds / removes as necessary"""
+
+        tag_list = cls.grab_tags(tags)
+
+        for tag in tag_list:
+
+            if tag not in post.tags:
+
+                post.tags.append(tag)
+
+        for tag in post.tags:
+
+            if tag not in tag_list:
+
+                post.tags.remove(tag)
+
+        db.session.add(post)
+        db.session.commit()
+
+        return
+        
 
 def connect_db(app):
     """connects to the db"""

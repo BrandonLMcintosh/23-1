@@ -1,15 +1,13 @@
 {% extends "root/base.html.j2" %}
 
 {% block selections %}
-    
-    Cancel
-
+    <a href="{{back}}" class="btn btn-danger">Cancel</a>
 {% endblock selections %}
+
 {% block body %}
     <form action="{{request.url}}" method="POST">
         {% block inputs %}{% endblock inputs %}
         <input type="submit" value="Edit" class="btn btn-warning">
-        <a href="{{back}}" class="btn btn-danger">Cancel</a>
     </form>
 {% endblock body %}
 

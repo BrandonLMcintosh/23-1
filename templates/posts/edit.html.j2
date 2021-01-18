@@ -1,11 +1,31 @@
-{% extends "root/base.html.j2" %}
+{% extends "root/edit.html.j2" %}
 
 {% block title %}
-    Edit Post: {{post.titles}}
+    Edit Post: {{post.title}}
 {% endblock title %}
 
 
 {% block inputs %}
     <input type="text" name="title" value="{{post.title}}">
     <input type="textarea" name="content" value="{{post.content}}">
+    <h5>Tags:</h5>
+    
+    {% for tag in tags %}
+        {% if tag in post.tags %}
+
+            <div>
+                <input type="checkbox" name="tags" value="{{tag.name}}" id="tag{{tag.id}}" checked>
+                <label for="tag{{tag.id}}">{{tag.name}}</label>
+            </div>
+
+        {% else %}
+
+            <div>
+                <input type="checkbox" name="tags" value="{{tag.name}}" id="tag{{tag.id}}">
+                <label for="tag{{tag.id}}">{{tag.name}}</label>
+            </div>
+
+        {% endif %}
+    {% endfor %}
+
 {% endblock inputs %}

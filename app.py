@@ -17,7 +17,6 @@ app.create_jinja_environment()
 
 toolbar = DebugToolbarExtension(app)
 connect_db(app)
-# db.drop_all()
 db.create_all()
 
 
@@ -130,25 +129,24 @@ def posts_list():
 
 @app.route('/posts/new/<int:user_id>', methods=["GET", "POST"])
 def posts_new(user_id):
-
+    tags = Tag.query.all()
     user = User.query.get_or_404(user_id)
 
     if request.method == "GET":
 
-        return render_template('posts/new.html.j2', user=user, back=f'/users/{user_id}')
+        return render_template('posts/new.html.j2', user=user, tags=tags, back=f'/users/{user_id}')
 
     elif request.method == "POST":
 
         title = request.form["title"]
         content = request.form["content"]
-        created_at = datetime.now()
+        tags = request.form.getlist('tags')
+        created_at = datetime.now().strftime('%A, %B %d, %Y')
 
         post = Post(title=title, content=content, created_at=created_at, user_id=user_id)
+        Tag.change_tags(post, tags)
 
-        db.session.add(post)
-        db.session.commit()
-
-        return redirect(f'/users/{user_id}')
+        return redirect(f'/posts/{post.id}')
 
     else:
         
@@ -166,25 +164,23 @@ def posts_get(post_id):
 @app.route('/posts/<int:post_id>/edit', methods=["GET", "POST"])
 def posts_edit(post_id):
     """POST route for user post edit. Doesn't change post.created_at or post.user"""
-
+    tags = Tag.query.all()
     post = Post.query.get(post_id)
 
     if request.method == "GET":
 
-        return render_template('posts/edit.html.j2', post=post, back=f'/posts/{post_id}')
+        return render_template('posts/edit.html.j2', post=post, tags=tags, back=f'/posts/{post_id}')
 
     elif request.method == "POST":
 
         title = request.form["title"]
         content = request.form["content"]
-        updated_at = datetime.now().strftime('%A, %B %d, %Y')
+        tags = request.form.getlist('tags')
 
         post.title = title
         post.content = content
-        post.updated_at = updated_at
 
-        db.session.add(post)
-        db.session.commit()
+        Tag.change_tags(post, tags)
 
         return redirect(f'/posts/{post_id}')
     

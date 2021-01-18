@@ -1,4 +1,4 @@
-{% extends "root/base.html.j2" %}
+{% extends "root/list.html.j2" %}
 
 {% block title %}
     Last 5 Posts
@@ -12,7 +12,7 @@
                 <sub>
                 Posted by <a href="/users/{{post.user_id}}">{{post.user.full_name}}</a> on {{post.created_at}} 
                 {% if  post.updated_at%}
-                     -- Updated at {post.updated_at}
+                     -- Updated at {{post.updated_at}}
                 {% endif %}
                 </sub>
             </div>

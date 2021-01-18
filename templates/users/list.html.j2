@@ -1,6 +1,6 @@
-{% extends "root/base.html.j2" %}
+{% extends "root/list.html.j2" %}
 {% block title %}
-Users
+Users <a href="/users/new" class="btn btn-success">Add User</a>
 {% endblock title %}Users
 
 {% block body %}
@@ -9,5 +9,5 @@ Users
             <li><a href="/users/{{user.id}}">{{user.full_name}}</a></li>
         {% endfor %}
     </ul>
-    <a href="/users/new" class="btn btn-primary">Create a User</a>
+    
 {% endblock body %}

@@ -1,0 +1,7 @@
+{% extends "root/base.html.j2" %}
+
+{% block selections %}
+    <a href="{{back}}" class="btn btn-primary">Back</a>
+    <a href="{{request.path}}/edit" class="btn btn-warning">Edit</a>
+    <a href="{{request.path}}/delete" class="btn btn-danger">Delete</a>
+{% endblock selections %}

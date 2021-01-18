@@ -1,4 +1,4 @@
-{% extends "root/base.html.j2" %}
+{% extends "root/get.html.j2" %}
 
 {% block title %}
     {{post.title}}
@@ -7,23 +7,15 @@
 {% block body %}
     <div class="container">
         <h2>{{post.title}}</h2>
-        <sub class="mb-5">Created {{post.created_at}} by <a href="/users/{{user_id}}">{{user.full_name}}</a></sub>
+        <sub class="mb-5">Created {{post.created_at}} by <a href="/users/{{post.user_id}}">{{post.user.full_name}}</a></sub>
         {% if post.updated_at %}
-            <sub class="mb-5">{{post.updated_at}}</sub>
+            <sub class="mb-5"> -- Updated {{post.updated_at}}</sub>
         {% endif %}
         <p class="mt-5">{{post.content}}</p>
         <h4>Tags:
-        {% for tag in post.tags %}
-            <h6 class="badge bg-primary"><a href="/tags/{{tag.id}}">{{tag.name}}</a></h6>
-        {% endfor %}
-        
+            {% for tag in post.tags %}
+                <h6><a href="/tags/{{tag.id}}" class="badge bg-primary">{{tag.name}}</a></h6>
+            {% endfor %}
         </h4>
-
-        
-        {% endfor %}<h6 class="badge bg-primary"></h6>
     </div>
-    
-    <a href="/posts/{{post.id}}/edit" class="btn btn-warning">Edit</a>
-    <a href="/posts/{{post.id}}/delete" class="btn btn-danger">Delete</a>
-    
 {% endblock body %}

@@ -1,23 +1,18 @@
-{% extends "root/base.html.j2" %}
+{% extends "root/new.html.j2" %}
 
 {% block title %}
     New Post
 {% endblock title %}
 
-{% block body %}
-<div class="container">
-    <form action="/posts/new/{{user.id}}" method="POST">
-        <div class="row">
-            <input type="text" name="title" placeholder="Title">
-        </div>
-        <div class="row">
-            <input type="textarea" name="content" placeholder="Content">
-        </div>
-        <div class="row">
-            <input type="submit" class=" col btn btn-success" value="Add">
-            <a href="{{back}}" class="col btn btn-danger">Cancel</a>
-        </div>
-    </form>
-</div>
+{% block inputs %}
+    <input type="text" name="title" placeholder="Title">
+    <input type="textarea" name="content" placeholder="Content">
+    {% for tag in tags %}
 
-{% endblock body %}
+        <div>
+            <input type="checkbox" name="tags" id="tag{{tag.id}}" value="{{tag.name}}">
+            <label for="tag{{tag.id}}">{{tag.name}}</label>
+        </div>
+        
+    {% endfor %}
+{% endblock inputs %}

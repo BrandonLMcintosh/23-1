@@ -1,0 +1,12 @@
+{% extends "root/base.html.j2" %}
+
+{% block selections %}
+    <a href="{{back}}" class="btn btn-danger">Cancel</a>
+{% endblock selections %}
+
+{% block body %}
+    <form action="{{request.url}}" method="POST">
+        {% block inputs %}{% endblock inputs %}
+        <input type="submit" value="Add" class="btn btn-success">
+    </form>
+{% endblock body %}
